@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Rol {
+  ADMINISTRATOR
+  SUPERVISOR
+}
+
+enum Status {
+  OK
+  CRITICAL
+  EXPIRED
+  RETIRED
+}
+
+model Alert {
+  id                    String                @id @default(uuid())
+  stock_id              String
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  status                Status
+  stock                 Stock                 @relation(fields: [stock_id], references: [id])
+}
+
+model Category {
+  id                    String                @id @default(uuid())
+  name                  String                @unique()
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  products              Product[]
+}
+
+model Contribution {
+  id                    String                @id @default(uuid())
+  quantity              Int
+  donation_id           String
+  stock_id              String
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  donation              Donation              @relation(fields: [donation_id], references: [id])
+  stock                 Stock                 @relation(fields: [stock_id], references: [id])
+}
+
+model Donation {
+  id                    String                @id @default(uuid())
+  receipt_url           String
+  ong_id                String
+  user_id               String
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  ong                   Ong                   @relation(fields: [ong_id], references: [id])
+  user                  User                  @relation(fields: [user_id], references: [id])
+  contributions         Contribution[]
+}
+
+model Location {
+  id                    String                @id @default(uuid())
+  name                  String
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  stocks                Stock[]
+}
+
+model Product {
+  id                    String                @id @default(uuid())
+  barcode               String                @unique()
+  name                  String
+  category_id           String
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  category              Category              @relation(fields: [category_id], references: [id])
+  stocks                Stock[]
+}
+
+model Ong {
+  id                    String                @id @default(uuid())
+  address               String                @unique()
+  name                  String
+  phone                 String
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  donation              Donation[]
+}
+
+model Stock {
+  id                    String                @id @default(uuid())
+  batch                 String
+  quantity              Int
+  location_id           String
+  product_id            String
+  user_id               String
+  expired_at            DateTime
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  status                Status
+  location              Location              @relation(fields: [location_id], references: [id])
+  product               Product               @relation(fields: [product_id], references: [id])
+  user                  User                  @relation(fields: [user_id], references: [id])
+  alerts                Alert[]
+  contributions         Contribution[]
+}
+
+model User {
+  id                    String                @id @default(uuid())
+  dni                   String                @unique()
+  lastname              String
+  name                  String
+  phone                 String?
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  deleted_at            DateTime?
+  rol                   Rol
+  donations             Donation[]
+  stocks                Stock[]
+}
