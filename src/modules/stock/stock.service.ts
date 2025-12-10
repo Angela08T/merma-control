@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Injectable, BadRequestException } from '@nestjs/common';
+=======
+import { Injectable } from '@nestjs/common';
+>>>>>>> f6a35adec5d28cf111d9a37795fdbe486e2c79e1
 import { CreateStockDto } from './dto/create-stock.dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
 import { PrismaService } from '../../prisma/prisma.service';
